@@ -20,7 +20,8 @@ PARTS: dict[int, dict] = {
         "title": "Part 1 - Foundations",
         "blurb": "The algorithms, written from scratch with NumPy. No scikit-learn, no PyTorch, "
         "no hidden steps: every number on these pages came out of code you can read.",
-        "note": "Run them with `python -m mlconcepts.foundations.<module>` or all at once with `python run_all.py`.",
+        "note": "Run any one of them with `python -m mlconcepts.foundations.NAME` (for example, "
+        "`python -m mlconcepts.foundations.pca`), or all of them at once with `python run_all.py`.",
     },
     2: {
         "number": 2,
