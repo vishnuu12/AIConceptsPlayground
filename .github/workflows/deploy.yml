@@ -1,0 +1,77 @@
+# Runs the demos, the tests, and then publishes the site to GitHub Pages.
+#
+# One-time setup: repo Settings -> Pages -> Source = "GitHub Actions".
+#
+# NOTE ON THE PLAN: GitHub Pages on a PRIVATE repository requires GitHub Pro,
+# Team or Enterprise. On a Free account the repository must be public.
+
+name: Test, build and deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # If any demo raises, this fails and nothing is published.
+      - name: Run every demo (writes the plots)
+        env:
+          MPLBACKEND: Agg
+          AICONCEPTS_PLOTS: docs/plots
+        run: python run_all.py
+
+      # The assertions that would fail if an algorithm changed behaviour.
+      - name: Run the tests
+        env:
+          MPLBACKEND: Agg
+          AICONCEPTS_NO_PLOTS: "1"
+        run: python -m pytest tests -q
+
+      # Turns the content package plus the plots into plain HTML.
+      - name: Build the site
+        run: python tools/build_site.py
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload the built site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
