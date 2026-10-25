@@ -46,10 +46,27 @@ import numpy as np
 DIM = 256
 _TOKEN_RE = re.compile(r"[a-z0-9']+")
 
+# Words this short, and words this common, carry almost no signal and a lot of
+# noise: every question contains "what", "the" and "is", and every document does
+# too, so matching on them ranks at random. Dropping them is the cheapest
+# improvement you can make to a keyword-based retriever - and it is the same
+# instinct that leads to IDF weighting in a real one.
+MIN_TOKEN_LENGTH = 3
+STOPWORDS = frozenset(
+    "the and for are was with that this from you not but has can its all does what how why when "
+    "which into than they them then there these some such only also more most other over same "
+    "very will just about after before being both each few had have here him his may our out she "
+    "should their under upon were who would your".split()
+)
+
 
 def tokens(text: str) -> list[str]:
-    """Lowercase word tokens. Real embedding models use subword tokens instead."""
-    return _TOKEN_RE.findall(text.lower())
+    """Lowercase content words. Real embedding models use subword tokens instead."""
+    return [
+        token
+        for token in _TOKEN_RE.findall(text.lower())
+        if len(token) >= MIN_TOKEN_LENGTH and token not in STOPWORDS
+    ]
 
 
 def _bucket(token: str, dim: int) -> int:
