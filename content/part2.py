@@ -66,7 +66,9 @@ PART_2: list[dict] = [
         ],
         "results": [
             "self-similarity of a sentence with itself: 1.0000",
-            "average similarity between different sentences: 0.140",
+            "average similarity between different sentences: 0.078",
+            "short words and stopwords are dropped before hashing - otherwise every "
+            "sentence matches every question on 'the' and 'is'",
             "cos('car','automobile') = 0.000 - the honest failure of shared-word matching",
         ],
         "demo": "python -m mlconcepts.llm.embeddings",
@@ -365,8 +367,9 @@ PART_2: list[dict] = [
         ],
         "results": [
             "8 documents became 16 chunks (45 words, overlap 12)",
-            "the right chunk ranked first at cosine 0.527",
-            "grounded answer cited '(source: gradient-descent#1)'",
+            "the right chunk ranked first at cosine 0.450",
+            "the grounded answer quoted two passages and cited both",
+            "(source: gradient-descent#0, source: gradient-descent#1)",
             "ungrounded answer invented 'section 4.2 of the handbook'",
         ],
         "demo": "python -m mlconcepts.llm.rag",
@@ -512,10 +515,10 @@ PART_2: list[dict] = [
                 "heading": "Score retrieval and generation separately",
                 "paragraphs": [
                     "This is the single most useful habit in the whole of Part 2. On the golden set here, "
-                    "retrieval found the right document in 5 of 6 cases while the generated answer contained "
-                    "the fact in only 3.",
-                    "'RAG is bad' is not a diagnosis. 'Retrieval 83%, generation 50%' tells you exactly what "
-                    "to fix: the answer step, not the index.",
+                    "retrieval found the right document in 6 of 6 cases while the generated answer "
+                    "contained the fact in only 3.",
+                    "'RAG is bad' is not a diagnosis. 'Retrieval 100%, generation 50%' tells you exactly "
+                    "what to fix: the answer step, not the index.",
                 ],
                 "code": (
                     "retrieval hit rate  = is the right doc in the top k?      -> fix chunking / embedding\n"
@@ -550,7 +553,7 @@ PART_2: list[dict] = [
             },
         ],
         "results": [
-            "retrieval hit rate 5/6; generation 3/6",
+            "retrieval hit rate 6/6; generation 3/6",
             "no retrieval: 0/6 facts, 0% citations",
             "with RAG: 3/6 facts, 100% citations",
             "no regressions - every case that passed before still passes",
