@@ -223,7 +223,8 @@ def demo(plots_dir: Path | None = None) -> dict:
     print(f"But look at the three columns together. Retrieval found the right")
     print(f"document in {sum(hits)}/{len(hits)} cases, while the generated answer contained the")
     print(f"fact in {improved['passed']}/{improved['total']}. Retrieval is doing its job; the")
-    print("GENERATOR is the weak link - it quotes one sentence and misses the rest.")
+    print("GENERATOR is the weak link - it quotes the two best-matching sentences and")
+    print("misses the rest of what it was given.")
     print()
     print("That is why you score them separately. 'RAG is bad' is not a diagnosis.")
     print(
