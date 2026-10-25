@@ -34,6 +34,14 @@ jobs:
           python-version: "3.12"
           cache: pip
 
+      # The interactive demos on the site are a second implementation of the
+      # algorithms in JavaScript. tests/test_demos_js.py runs them under Node,
+      # so a broken demo fails the build instead of shipping as a blank panel.
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
       - name: Install dependencies
         run: pip install -r requirements.txt
 
@@ -44,7 +52,8 @@ jobs:
           AICONCEPTS_PLOTS: docs/plots
         run: python run_all.py
 
-      # The assertions that would fail if an algorithm changed behaviour.
+      # The assertions that would fail if an algorithm changed behaviour -
+      # including the JavaScript demos, which pytest shells out to Node for.
       - name: Run the tests
         env:
           MPLBACKEND: Agg
