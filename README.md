@@ -11,11 +11,14 @@ Fifteen runnable demos for machine learning and LLM engineering, in two parts:
 Every demo **runs**, every claim is **tested**, and every number quoted in the write-up was printed
 by the code in this repository.
 
+**Every concept also has an interactive demo on the site** — sliders and buttons, live plots, no
+install. See it at **https://vishnuu12.github.io/AIConceptsPlayground/**.
+
 ```bash
 pip install -r requirements.txt
 
 python run_all.py            # run all 15 demos, write the plots
-python -m pytest tests -q    # 45+ assertions that fail if an algorithm changes behaviour
+python -m pytest tests -q    # 47 tests: the algorithms, the site, and the browser demos
 python tools/build_site.py   # build the static site into dist/
 
 python -m mlconcepts.foundations.neural_network   # or run a single demo
@@ -78,6 +81,24 @@ Plus an **[interview prep page](https://vishnuu12.github.io/AIConceptsPlayground
 **74 questions** across every concept, plus the cross-cutting questions about how you would approach
 a problem end to end.
 
+### Try it in the browser
+
+Every concept page opens with a **Try it** panel. Drag the learning rate past 0.33 and watch the
+loss diverge; turn the polynomial degree to 15 and watch test error explode; press train on the
+neural network with the hidden layer off (60%) and on (99.8%).
+
+Those demos are a **second implementation** of the algorithms, in plain JavaScript — the browser
+cannot run NumPy. A second implementation is a liability unless something keeps it honest, so
+`tests/js/math.test.js` asserts the same properties the Python tests do, and `pytest` runs it:
+
+```bash
+node tests/js/math.test.js      # 28 checks: the JS maths + all 15 demo UIs
+```
+
+The knowledge base and the golden set that the RAG and evaluation demos use are **generated from the
+Python** by `tools/build_site.py`, so there is one copy of the documents and the page and the test
+suite cannot drift apart.
+
 ---
 
 ## Live site
@@ -106,9 +127,16 @@ mlconcepts/
     embeddings.py  tokenization.py  prompting.py
     rag.py  knowledge.py  tools_agent.py  evaluation.py
 content/                      the write-up: one page per concept, plus interview Q&A
-tools/build_site.py           content + plots -> plain HTML
-site/static/                  one stylesheet, one small script
-tests/                        pytest: foundations, llm, and the site build
+tools/build_site.py           content + plots -> plain HTML, and the JS knowledge data
+site/static/
+  style.css  app.js           one stylesheet, one small script
+  demos.js                    the canvas plotter, the controls, the demo registry
+  math-foundations.js         Part 1's algorithms as pure JS functions (testable under Node)
+  demos-foundations.js        the nine Part 1 demo UIs
+  math-llm.js                 Part 2's building blocks as pure JS functions
+  demos-llm.js                the six Part 2 demo UIs
+tests/                        pytest: foundations, llm, the site build, and the JS demos
+  js/math.test.js             the JavaScript maths + a fake-DOM smoke test of every demo
 run_all.py                    runs all 15 demos and prints a summary
 ```
 
@@ -137,6 +165,12 @@ honest one.
 - **The embeddings in Part 2 are feature hashing**, not a trained model. They capture shared words,
   not meaning, so `cos('car', 'automobile')` is 0.0. Everything else on that page is identical with
   real embeddings, and the page says so.
+- **The browser demos are a second implementation.** They are kept in step with the Python by
+  tests, not by hope — but if you find a disagreement between a page's numbers and the demo's, that
+  is a bug worth reporting, not a rounding difference.
+- **The embeddings drop stopwords.** Every sentence contains "the" and "is", so matching on them
+  ranks at random. Filtering them took the retrieval hit rate from 5/6 to 6/6 on the golden set -
+  which is the cheapest lesson in the whole of Part 2.
 - **No GPU, no large models.** Every demo is deliberately tiny so it runs in seconds on a laptop.
   You will understand the mechanics here; you will not train a production model here.
 - **A repo is a scaffold, not a course.** It is built to be read alongside a textbook or a course,
