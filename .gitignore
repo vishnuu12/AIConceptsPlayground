@@ -1,0 +1,16 @@
+# Build artefacts and caches.
+#
+# docs/plots/ is NOT committed on purpose: the images are produced by running the
+# demos, and the deploy workflow regenerates them before building the site. A
+# clone that has never run the code should not contain pictures claiming to be
+# its output.
+dist/
+docs/plots/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+.DS_Store
+.idea/
+.vscode/
