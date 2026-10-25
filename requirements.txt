@@ -1,0 +1,8 @@
+# Runtime + test dependencies for AIConceptsPlayground.
+#
+# Deliberately small. The whole point of Part 1 is that the algorithms are
+# written from scratch with NumPy - no scikit-learn, no PyTorch - so that you
+# can read every line that makes the model learn.
+numpy>=2.0
+matplotlib>=3.9
+pytest>=8.0
